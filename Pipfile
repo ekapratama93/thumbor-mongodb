@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+flake8 = "*"
+pylint = "*"
+pyvows = "*"
+coverage = "*"
+tornado_pyvows = "*"
+
+[packages]
+thumbor = "==6.5.1"
+pymongo = "==3.11.0"
+pytz = "*"
+
+[requires]
+python_version = "2.7"
