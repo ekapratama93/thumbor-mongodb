@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Licensed under the MIT license:
+# http://www.opensource.org/licenses/mit-license
+# Copyright (c) 2020 ekapratama93
+
 from pymongo import ASCENDING, DESCENDING, MongoClient
 
 

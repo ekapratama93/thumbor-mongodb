@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/mit-license
+# Copyright (c) 2020 ekapratama93
 # Copyright (c) 2015 Thumbor-Community
 # Copyright (c) 2011 globo.com timehome@corp.globo.com
 
