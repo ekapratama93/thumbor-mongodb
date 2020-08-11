@@ -9,6 +9,7 @@ pylint = "*"
 pyvows = "*"
 coverage = "*"
 tornado_pyvows = "*"
+mock = "*"
 
 [packages]
 thumbor = "==6.5.1"
