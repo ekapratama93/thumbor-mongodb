@@ -123,11 +123,9 @@ class Storage(BaseStorage):
             }).limit(1), None)
 
             if image:
-                age = int(
-                    (datetime.utcnow() - image['created_at']).total_seconds()
-                )
-                timediff = datetime.utcnow() - timedelta(seconds=age)
-                return timediff.seconds > expire
+                return False
+            else:
+                return True
         else:
             return True
 
