@@ -3,7 +3,8 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020 ekapratama93
 
-from pymongo import ASCENDING, DESCENDING, MongoClient
+from motor.motor_tornado import MotorClient
+from pymongo import ASCENDING, DESCENDING
 
 
 class Singleton(type):
@@ -41,9 +42,9 @@ class MongoConnector(object):
 
     def create_connection(self):
         if self.uri:
-            connection = MongoClient(self.uri)
+            connection = MotorClient(self.uri)
         else:
-            connection = MongoClient(self.host, self.port)
+            connection = MotorClient(self.host, self.port)
 
         db_conn = connection[self.db_name]
         col_conn = db_conn[self.col_name]
@@ -52,8 +53,9 @@ class MongoConnector(object):
 
     def ensure_index(self):
         index_name = 'key_1_created_at_-1'
-        if index_name not in self.col_conn.index_information():
-            self.col_conn.create_index(
+        indexes = yield self.col_conn.index_information()
+        if index_name not in indexes:
+            yield self.col_conn.create_index(
                 [('key', ASCENDING), ('created_at', DESCENDING)],
                 name=index_name
             )

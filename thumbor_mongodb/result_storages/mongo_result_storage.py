@@ -3,11 +3,8 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020 ekapratama93
 
-import time
 from datetime import datetime, timedelta
-import pytz
-
-import gridfs
+from motor.motor_tornado import MotorGridFSBucket
 from pymongo.errors import PyMongoError
 from tornado.concurrent import return_future
 from thumbor.engines import BaseEngine
@@ -15,6 +12,8 @@ from thumbor.result_storages import BaseStorage, ResultStorageResult
 from thumbor.utils import logger
 from thumbor_mongodb.utils import OnException
 from thumbor_mongodb.mongodb.connector_result_storage import MongoConnector
+import time
+import pytz
 
 
 class Storage(BaseStorage):
@@ -38,12 +37,28 @@ class Storage(BaseStorage):
         :rtype: pymongo.database.Database, pymongo.database.Collection
         '''
 
+        db_name = self.context.config.MONGO_STORAGE_SERVER_DB
+        col_name = self.context.config.MONGO_STORAGE_SERVER_COLLECTION
+        uri = None
+        host = None
+        port = None
+        try:
+            uri = self.context.config.MONGO_STORAGE_URI
+        except AttributeError as e:
+            print e
+
+        try:
+            host = self.context.config.MONGO_STORAGE_SERVER_HOST
+            port = self.context.config.MONGO_STORAGE_SERVER_PORT
+        except AttributeError as e:
+            print e
+
         mongo_conn = MongoConnector(
-            uri=self.context.config.MONGO_RESULT_STORAGE_URI,
-            host=self.context.config.MONGO_RESULT_STORAGE_SERVER_HOST,
-            port=self.context.config.MONGO_RESULT_STORAGE_SERVER_PORT,
-            db_name=self.context.config.MONGO_RESULT_STORAGE_SERVER_DB,
-            col_name=self.context.config.MONGO_RESULT_STORAGE_SERVER_COLLECTION
+            db_name=db_name,
+            col_name=col_name,
+            uri=uri,
+            host=host,
+            port=port,
         )
 
         database = mongo_conn.db_conn
@@ -109,9 +124,10 @@ class Storage(BaseStorage):
             expire = self.get_max_age
 
             if expire is None or expire == 0:
-                return False
+                yield False
+                return
 
-            image = next(self.storage.find({
+            image = yield self.storage.find_one({
                 'key': key,
                 'created_at': {
                     '$gte': datetime.utcnow() - timedelta(
@@ -120,14 +136,18 @@ class Storage(BaseStorage):
                 },
             }, {
                 'created_at': True, '_id': False
-            }).limit(1), None)
+            })
 
+            yield image
             if image:
-                return False
+                yield False
+                return
             else:
-                return True
+                yield True
+                return
         else:
-            return True
+            yield True
+            return
 
     @OnException(on_mongodb_error, PyMongoError)
     def put(self, bytes):
@@ -149,22 +169,26 @@ class Storage(BaseStorage):
 
         file_doc = dict(doc)
 
-        file_storage = gridfs.GridFS(self.database)
-        file_data = file_storage.put(bytes, **doc)
+        file_storage = MotorGridFSBucket(self.database)
+        grid_in, file_id = file_storage.open_upload_stream(**doc)
+        yield grid_in.write(bytes)
+        yield grid_in.close()
+        # file_data = file_storage.put(bytes, **doc)
 
-        file_doc['file_id'] = file_data
-        self.storage.insert_one(file_doc)
+        file_doc['file_id'] = file_id
+        yield self.storage.insert_one(file_doc)
 
     @return_future
     def get(self, callback):
         '''Get the item from MongoDB.'''
 
         key = self.get_key_from_request()
-        callback(self._get(key))
+        # callback(self._get(key))
+        self._get(key)
 
     @OnException(on_mongodb_error, PyMongoError)
     def _get(self, key):
-        stored = next(self.storage.find({
+        stored = yield self.storage.find_one({
             'key': key,
             'created_at': {
                 '$gte': datetime.utcnow() - timedelta(
@@ -175,14 +199,18 @@ class Storage(BaseStorage):
             'file_id': True,
             'created_at': True,
             'metadata': True
-        }).limit(1), None)
+        })
 
+        yield stored
         if not stored:
-            return None
+            yield None
+            return
 
-        file_storage = gridfs.GridFS(self.database)
-
-        contents = file_storage.get(stored['file_id']).read()
+        file_storage = MotorGridFSBucket(self.database)
+        grid_out = yield file_storage.open_download_stream(file_id)
+        contents = yield grid_out.read()
+        yield contents
+        # contents = file_storage.get(stored['file_id']).read()
 
         metadata = stored['metadata']
         metadata['LastModified'] = stored['created_at'].replace(
@@ -195,7 +223,8 @@ class Storage(BaseStorage):
             metadata=metadata,
             successful=True
         )
-        return result
+        yield result
+        return
 
     @OnException(on_mongodb_error, PyMongoError)
     def last_updated(self):
@@ -208,9 +237,9 @@ class Storage(BaseStorage):
         max_age = self.get_max_age()
 
         if max_age == 0:
-            return datetime.fromtimestamp(Storage.start_time)
-
-        image = next(self.storage.find({
+            yield  datetime.fromtimestamp(Storage.start_time)
+            return
+        image = yield self.storage.find_one({
             'key': key,
             'created_at': {
                 '$gte': datetime.utcnow() - timedelta(
@@ -219,8 +248,9 @@ class Storage(BaseStorage):
             },
         }, {
             'created_at': True, '_id': False
-        }).limit(1), None)
+        })
 
+        yield image
         if image:
             age = int(
                 (datetime.utcnow() - image['created_at']).total_seconds()
@@ -228,15 +258,17 @@ class Storage(BaseStorage):
             ttl = max_age - age
 
             if max_age <= 0:
-                return datetime.fromtimestamp(Storage.start_time)
-
+                yield  datetime.fromtimestamp(Storage.start_time)
+                return
             if ttl >= 0:
-                return datetime.utcnow() - timedelta(
+                yield datetime.utcnow() - timedelta(
                     seconds=(
                         max_age - ttl
                     )
                 )
+                return
 
         # Should never reach here. It means the storage put failed or the item
         # somehow does not exists anymore
-        return datetime.utcnow()
+        yield datetime.utcnow()
+        return

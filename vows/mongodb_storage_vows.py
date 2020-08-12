@@ -11,6 +11,7 @@
 from thumbor_mongodb.storages.mongo_storage import Storage as MongoStorage
 from thumbor.context import Context
 from thumbor.config import Config
+from tornado import gen
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from pyvows import Vows, expect
@@ -18,6 +19,7 @@ from fixtures.storage_fixtures import IMAGE_URL, IMAGE_BYTES, get_server
 
 
 class MongoDBContext(Vows.Context):
+    @gen.coroutine
     def setup(self):
         self.connection = MongoClient(
             'localhost',
@@ -30,6 +32,7 @@ class MongoDBContext(Vows.Context):
 @Vows.batch
 class MongoStorageVows(MongoDBContext):
     class CanStoreImage(Vows.Context):
+        @gen.coroutine
         def topic(self):
             config = Config(
                 MONGO_STORAGE_URI="",
@@ -45,11 +48,13 @@ class MongoStorageVows(MongoDBContext):
             storage.put(IMAGE_URL % 9999, IMAGE_BYTES)
             return storage.exists(IMAGE_URL % 9999)
 
+        @gen.coroutine
         def should_be_in_catalog(self, topic):
             expect(topic).not_to_be_null()
             expect(topic).not_to_be_an_error()
 
         class KnowsImageDoesNotExist(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -64,11 +69,13 @@ class MongoStorageVows(MongoDBContext):
                 ))
                 return storage.exists(IMAGE_URL % 10000)
 
+            @gen.coroutine
             def should_not_exist(self, topic):
                 expect(topic.exception()).not_to_be_an_error()
                 expect(topic.result()).to_be_false()
 
     class CanRemoveImage(Vows.Context):
+        @gen.coroutine
         def topic(self):
             config = Config(
                 MONGO_STORAGE_URI="",
@@ -83,8 +90,9 @@ class MongoStorageVows(MongoDBContext):
             ))
             storage.put(IMAGE_URL % 10001, IMAGE_BYTES)
             storage.remove(IMAGE_URL % 10001)
-            return storage._get(IMAGE_URL % 10001)
+            return storage.get(IMAGE_URL % 10001)
 
+        @gen.coroutine
         def should_not_be_in_catalog(self, topic):
             expect(topic).not_to_be_an_error()
             expect(topic).to_be_null()
@@ -104,11 +112,13 @@ class MongoStorageVows(MongoDBContext):
                 ))
                 return storage.remove(IMAGE_URL % 10001)
 
+            @gen.coroutine
             def should_not_be_in_catalog(self, topic):
                 expect(topic).not_to_be_an_error()
                 expect(topic).to_be_null()
 
     class CanGetImage(Vows.Context):
+        @gen.coroutine
         def topic(self):
             config = Config(
                 MONGO_STORAGE_URI="",
@@ -125,10 +135,12 @@ class MongoStorageVows(MongoDBContext):
             storage.put(IMAGE_URL % 2, IMAGE_BYTES)
             return storage.get(IMAGE_URL % 2)
 
+        @gen.coroutine
         def should_not_be_null(self, topic):
             expect(topic.result()).not_to_be_null()
             expect(topic.exception()).not_to_be_an_error()
 
+        @gen.coroutine
         def should_have_proper_bytes(self, topic):
             expect(topic.result()).to_equal(IMAGE_BYTES)
 
@@ -150,6 +162,7 @@ class MongoStorageVows(MongoDBContext):
                 ))
                 return storage
 
+            @gen.coroutine
             def should_throw_an_exception(self, storage):
                 try:
                     result = storage.exists(IMAGE_URL % 3).result()
@@ -176,11 +189,13 @@ class MongoStorageVows(MongoDBContext):
 
                 return storage
 
+            @gen.coroutine
             def should_return_false(self, storage):
                 result = storage.exists(IMAGE_URL % 3)
                 expect(result.result()).to_equal(False)
                 expect(result.exception()).not_to_be_an_error()
 
+            @gen.coroutine
             def should_return_none(self, storage):
                 result = storage.get(IMAGE_URL % 3)
                 expect(result.result()).to_equal(None)
@@ -205,6 +220,7 @@ class MongoStorageVows(MongoDBContext):
                 storage.put(IMAGE_URL % 3, IMAGE_BYTES)
                 storage.put_crypto(IMAGE_URL % 3)
 
+            @gen.coroutine
             def should_be_an_error(self, topic):
                 expect(topic).to_be_an_error_like(RuntimeError)
                 expect(topic).to_have_an_error_message_of(
@@ -213,6 +229,7 @@ class MongoStorageVows(MongoDBContext):
                 )
 
         class GettingCryptoForANewImageReturnsNone(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -228,10 +245,12 @@ class MongoStorageVows(MongoDBContext):
                 ))
                 return storage.get_crypto(IMAGE_URL % 9999)
 
+            @gen.coroutine
             def should_be_null(self, topic):
                 expect(topic.result()).to_be_null()
 
         class DoesNotStoreIfConfigSaysNotTo(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -248,10 +267,12 @@ class MongoStorageVows(MongoDBContext):
                 storage.put_crypto(IMAGE_URL % 5)
                 return storage.get_crypto(IMAGE_URL % 5)
 
+            @gen.coroutine
             def should_be_null(self, topic):
                 expect(topic.result()).to_be_null()
 
         class CanStoreCrypto(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -269,15 +290,18 @@ class MongoStorageVows(MongoDBContext):
                 storage.put_crypto(IMAGE_URL % 6)
                 return storage.get_crypto(IMAGE_URL % 6)
 
+            @gen.coroutine
             def should_not_be_null(self, topic):
                 expect(topic.result()).not_to_be_null()
                 expect(topic.exception()).not_to_be_an_error()
 
+            @gen.coroutine
             def should_have_proper_key(self, topic):
                 expect(topic.result()).to_equal('ACME-SEC')
 
     class DetectorVows(Vows.Context):
         class CanStoreDetectorData(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -294,14 +318,17 @@ class MongoStorageVows(MongoDBContext):
                 storage.put_detector_data(IMAGE_URL % 7, 'some-data')
                 return storage.get_detector_data(IMAGE_URL % 7)
 
+            @gen.coroutine
             def should_not_be_null(self, topic):
                 expect(topic.result()).not_to_be_null()
                 expect(topic.exception()).not_to_be_an_error()
 
+            @gen.coroutine
             def should_equal_some_data(self, topic):
                 expect(topic.result()).to_equal('some-data')
 
         class ReturnsNoneIfNoDetectorData(Vows.Context):
+            @gen.coroutine
             def topic(self):
                 config = Config(
                     MONGO_STORAGE_URI="",
@@ -316,5 +343,6 @@ class MongoStorageVows(MongoDBContext):
                 ))
                 return storage.get_detector_data(IMAGE_URL % 10000)
 
+            @gen.coroutine
             def should_not_be_null(self, topic):
                 expect(topic.result()).to_be_null()

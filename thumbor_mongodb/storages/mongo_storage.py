@@ -6,7 +6,7 @@
 # Copyright (c) 2011 globo.com timehome@corp.globo.com
 
 from datetime import datetime, timedelta
-import gridfs
+from motor.motor_tornado import MotorGridFSBucket
 from pymongo.errors import PyMongoError
 from tornado.concurrent import return_future
 from thumbor.storages import BaseStorage
@@ -32,12 +32,28 @@ class Storage(BaseStorage):
         :rtype: pymongo.database.Database, pymongo.database.Collection
         '''
 
+        db_name = self.context.config.MONGO_STORAGE_SERVER_DB
+        col_name = self.context.config.MONGO_STORAGE_SERVER_COLLECTION
+        uri = None
+        host = None
+        port = None
+        try:
+            uri = self.context.config.MONGO_STORAGE_URI
+        except AttributeError as e:
+            print e
+
+        try:
+            host = self.context.config.MONGO_STORAGE_SERVER_HOST
+            port = self.context.config.MONGO_STORAGE_SERVER_PORT
+        except AttributeError as e:
+            print e
+
         mongo_conn = MongoConnector(
-            uri=self.context.config.MONGO_STORAGE_URI,
-            host=self.context.config.MONGO_STORAGE_SERVER_HOST,
-            port=self.context.config.MONGO_STORAGE_SERVER_PORT,
-            db_name=self.context.config.MONGO_STORAGE_SERVER_DB,
-            col_name=self.context.config.MONGO_STORAGE_SERVER_COLLECTION
+            db_name=db_name,
+            col_name=col_name,
+            uri=uri,
+            host=host,
+            port=port,
         )
 
         database = mongo_conn.db_conn
@@ -84,97 +100,114 @@ class Storage(BaseStorage):
                         if no SECURITY_KEY specified")
             doc_with_crypto['crypto'] = self.context.server.security_key
 
-        file_storage = gridfs.GridFS(self.database)
-        file_data = file_storage.put(bytes, **doc)
+        file_storage = MotorGridFSBucket(self.database)
+        grid_in, file_id = file_storage.open_upload_stream(**doc)
+        yield grid_in.write(bytes)
+        yield grid_in.close()
+        # file_data = file_storage.put(bytes, **doc)
 
-        doc_with_crypto['file_id'] = file_data
-        self.storage.insert_one(doc_with_crypto)
+        doc_with_crypto['file_id'] = file_id
+        yield self.storage.insert_one(doc_with_crypto)
 
     @OnException(on_mongodb_error, PyMongoError)
     def put_crypto(self, path):
         if not self.context.config.STORES_CRYPTO_KEY_FOR_EACH_IMAGE:
-            return None
+            yield None
+            return
 
         if not self.context.server.security_key:
             raise RuntimeError("STORES_CRYPTO_KEY_FOR_EACH_IMAGE can't be \
                 True if no SECURITY_KEY specified")
 
-        self.storage.update_one(
+        yield self.storage.update_many(
             {'path': path},
             {'$set': {'crypto': self.context.server.security_key}}
         )
 
     @OnException(on_mongodb_error, PyMongoError)
     def put_detector_data(self, path, data):
-        self.storage.update({'path': path}, {"$set": {"detector_data": data}})
+        yield self.storage.update_many({'path': path}, {"$set": {"detector_data": data}})
 
     @return_future
     def get_crypto(self, path, callback):
-        callback(self._get_crypto(path))
+        # callback(self._get_crypto(path))
+        self._get_crypto(path)
 
     @OnException(on_mongodb_error, PyMongoError)
     def _get_crypto(self, path):
-        crypto = self.storage.find_one({'path': path})
-        return crypto.get('crypto') if crypto else None
+        crypto = yield self.storage.find_one({'path': path})
+        yield crypto.get('crypto') if crypto else None
+        return
 
     @return_future
     def get_detector_data(self, path, callback):
-        callback(self._get_detector_data(path))
+        # callback(self._get_detector_data(path))
+        self._get_detector_data(path)
 
     @OnException(on_mongodb_error, PyMongoError)
     def _get_detector_data(self, path):
-        doc = next(self.storage.find({
+        doc = yield self.storage.find_one({
             'path': path,
             'detector_data': {'$ne': None},
         }, {
             'detector_data': True,
-        }).limit(1), None)
-
-        return doc.get('detector_data') if doc else None
+        })
+        yield doc.get('detector_data') if doc else None
+        return
 
     @return_future
     def get(self, path, callback):
-        callback(self._get(path))
+        # callback(self._get(path))
+        self._get(path)
 
     @OnException(on_mongodb_error, PyMongoError)
     def _get(self, path):
         now = datetime.utcnow()
-        stored = next(
-            self.storage.find({
-                'path': path,
-                'created_at': {
-                    '$gte': now - timedelta(seconds=self.get_max_age())},
-            }, {'file_id': True}).limit(1), None
-        )
+        stored = yield self.storage.find_one({
+            'path': path,
+            'created_at': {
+                '$gte': now - timedelta(seconds=self.get_max_age())},
+        }, {'file_id': True})
+        file_id = yield stored['file_id']
 
         if not stored:
-            return None
+            yield None
+            return
 
-        file_storage = gridfs.GridFS(self.database)
+        file_storage = MotorGridFSBucket(self.database)
 
-        contents = file_storage.get(stored['file_id']).read()
-        return contents
+        grid_out = yield file_storage.open_download_stream(file_id)
+        contents = yield grid_out.read()
+        yield contents
+        return
 
     @return_future
     def exists(self, path, callback):
-        callback(self._exists(path))
+        # callback(self._exists(path))
+        self._exists(path)
 
     @OnException(on_mongodb_error, PyMongoError)
     def _exists(self, path):
-        return self.storage.find({
+        count = yield self.storage.count_documents({
             'path': path,
             'created_at': {
                 '$gte':
                     datetime.utcnow() - timedelta(seconds=self.get_max_age())
             },
-        }).limit(1).count() >= 1
+        })
+        yield count >= 1
+        return
 
     @OnException(on_mongodb_error, PyMongoError)
     def remove(self, path):
         self.storage.delete_many({'path': path})
 
-        file_storage = gridfs.GridFS(self.database)
-        file_datas = file_storage.find({'path': path})
-        if file_datas:
-            for file_data in file_datas:
-                file_storage.delete(file_data._id)
+        file_storage = MotorGridFSBucket(self.database)
+        cursor = file_storage.find({'path': path})
+        while (yield cursor.fetch_next):
+            grid_data = cursor.next_object()
+            data = grid_data.read()
+            yield file_storage.delete(data._id)
+        # if file_datas:
+        #     for file_data in file_datas:
+        #         file_storage.delete(file_data._id)

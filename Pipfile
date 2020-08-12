@@ -12,8 +12,8 @@ tornado_pyvows = "*"
 mock = "*"
 
 [packages]
+motor = ">=2.1.0,<3.0.0"
 thumbor = "==6.5.1"
-pymongo = "==3.11.0"
 pytz = "*"
 
 [requires]

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "faa63ce557f438501c77c915acce1dc1a3b2302987f9b53ff212511465f5eba8"
+            "sha256": "5c244047a4153257c3f871bedddfe54e8608178bd4c4a5a869acac1b708df5a9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -49,6 +49,15 @@
                 "sha256:2ba48729e9e52fed235c6948f40ffd5c59c9bc74593ccf4d988972e4f4d750ee"
             ],
             "version": "==1.3.2"
+        },
+        "motor": {
+            "hashes": [
+                "sha256:599719bc6dcddc3b9ea4e09659fb0073d5fadcc24735999b2902f48cef33f909",
+                "sha256:756c587985d166166e644ccd36fb8b586fb987eb42fc0fc60cce9a3d76d809b4",
+                "sha256:97b4fc0a00a84df30f866d18693c503eef46c7642f75218a2c44d74d835be38a"
+            ],
+            "index": "pypi",
+            "version": "==2.1.0"
         },
         "piexif": {
             "hashes": [
@@ -221,7 +230,7 @@
                 "sha256:ef76535776c0708a85258f6dc51d36a2df12633c735f6d197ed7dfcaa7449b99",
                 "sha256:f6efca006a81e1197b925a7d7b16b8f61980697bb6746587aad8842865233218"
             ],
-            "index": "pypi",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==3.11.0"
         },
         "pytz": {

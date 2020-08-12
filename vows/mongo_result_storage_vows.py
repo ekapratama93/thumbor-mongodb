@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from thumbor_mongodb.result_storages.mongo_result_storage import Storage as MongoStorage
 from pymongo import MongoClient
 from pyvows import Vows, expect
+from tornado import gen
 from vows.fixtures.storage_fixtures import IMAGE_BYTES
 import mock
 import time
@@ -52,6 +53,7 @@ class MongoResultStorage(MongoDBContext):
         def can_create_storage(self, topic):
             expect(topic).not_to_be_null()
 
+        @gen.coroutine
         def can_store_to_storage(self, topic):
             topic.put(IMAGE_BYTES)
             expect(topic).Not.to_be_an_error()
@@ -60,11 +62,13 @@ class MongoResultStorage(MongoDBContext):
             result = topic.get().result()
             expect(result.buffer).to_equal(IMAGE_BYTES)
 
+        @gen.coroutine
         def can_get_last_update(self, topic):
             expect(topic.last_updated()).to_be_lesser_than(
                 datetime.utcnow() + timedelta(seconds=self.context.config.MAX_AGE)
             )
 
+        @gen.coroutine
         def can_get_is_expired(self, topic):
             key = topic.get_key_from_request()
             expect(topic.is_expired(key)).to_be_false()
@@ -92,6 +96,7 @@ class MongoResultStorage(MongoDBContext):
                 )
                 return MongoStorage(self.context)
 
+            @gen.coroutine
             def should_not_exist(self, topic):
                 result = topic.get()
                 expect(result.exception()).not_to_be_an_error()
@@ -118,6 +123,7 @@ class MongoResultStorage(MongoDBContext):
                 )
                 return MongoStorage(self.context)
 
+            @gen.coroutine
             def can_store_autowebp(self, topic):
                 expect(topic.put(IMAGE_BYTES)).Not.to_be_an_error()
                 expected = ('result:%s/webp' % self.url)
