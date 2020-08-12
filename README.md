@@ -1,6 +1,8 @@
 # thumbor-mongodb
 
-MongoDB storage adapter for Thumbor. This is a fork from original Thumbor Community version of [tc_mongodb]("https://github.com/thumbor-community/mongodb). 
+[![codecov](https://codecov.io/gh/ekapratama93/thumbor-mongodb/branch/master/graph/badge.svg)](https://codecov.io/gh/ekapratama93/thumbor-mongodb)
+
+MongoDB storage adapter for Thumbor. This is a fork from original Thumbor Community version of [tc_mongodb]("https://github.com/thumbor-community/mongodb).
 Additional feature includes:
 
 1. Support for `MONGO_URI`

@@ -12,7 +12,7 @@ test:
 	@echo "Restart MongoDB"
 	@docker-compose down && docker-compose up -d
 	@echo "Run Vows"
-	@pipenv run pyvows -c -r coverage.xml -l thumbor_mongodb
+	@pipenv run pyvows -c -r coverage.xml -o thumbor_mongodb/utils.py -l thumbor_mongodb
 
 .PHONY: lint
 lint:
