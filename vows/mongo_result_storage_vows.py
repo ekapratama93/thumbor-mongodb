@@ -9,6 +9,7 @@
 
 from datetime import datetime, timedelta
 from thumbor_mongodb.result_storages.mongo_result_storage import Storage as MongoStorage
+from pymongo import MongoClient
 from pyvows import Vows, expect
 from vows.fixtures.storage_fixtures import IMAGE_BYTES
 import mock
@@ -72,7 +73,7 @@ class MongoResultStorage(MongoDBContext):
 
         class KnowsImageDoesNotExist(Vows.Context):
             def topic(self):
-                url = 'https://wikipedia.org/image'
+                url = 'https://wikipedia.org/image-not-found'
                 self.context = mock.Mock(
                     config=mock.Mock(
                         MONGO_RESULT_STORAGE_URI="",
@@ -94,7 +95,7 @@ class MongoResultStorage(MongoDBContext):
             def should_not_exist(self, topic):
                 result = topic.get()
                 expect(result.exception()).not_to_be_an_error()
-                expect(result.result()).not_to_be_null()
+                expect(result.result()).to_be_null()
 
         class StoreImageWithAutoWebp(Vows.Context):
             def topic(self):
