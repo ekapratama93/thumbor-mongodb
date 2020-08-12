@@ -73,7 +73,7 @@ class MongoResultStorage(MongoDBContext):
 
         class KnowsImageDoesNotExist(Vows.Context):
             def topic(self):
-                url = 'https://wikipedia.org/image'
+                url = 'https://wikipedia.org/image-not-found'
                 self.context = mock.Mock(
                     config=mock.Mock(
                         MONGO_RESULT_STORAGE_URI="",
