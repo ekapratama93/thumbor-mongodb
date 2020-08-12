@@ -32,12 +32,28 @@ class Storage(BaseStorage):
         :rtype: pymongo.database.Database, pymongo.database.Collection
         '''
 
+        db_name = self.context.config.MONGO_STORAGE_SERVER_DB
+        col_name = self.context.config.MONGO_STORAGE_SERVER_COLLECTION
+        uri = None
+        host = None
+        port = None
+        try:
+            uri = self.context.config.MONGO_STORAGE_URI
+        except AttributeError as e:
+            pass
+
+        try:
+            host = self.context.config.MONGO_STORAGE_SERVER_HOST
+            port = self.context.config.MONGO_STORAGE_SERVER_PORT
+        except AttributeError as e:
+            pass
+
         mongo_conn = MongoConnector(
-            uri=self.context.config.MONGO_STORAGE_URI,
-            host=self.context.config.MONGO_STORAGE_SERVER_HOST,
-            port=self.context.config.MONGO_STORAGE_SERVER_PORT,
-            db_name=self.context.config.MONGO_STORAGE_SERVER_DB,
-            col_name=self.context.config.MONGO_STORAGE_SERVER_COLLECTION
+            db_name=db_name,
+            col_name=col_name,
+            uri=uri,
+            host=host,
+            port=port,
         )
 
         database = mongo_conn.db_conn
