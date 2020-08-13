@@ -38,7 +38,7 @@ class MongoConnector(object):
         self.db_name = db_name
         self.col_name = col_name
         self.db_conn, self.col_conn = self.create_connection()
-        self.ensure_index()
+        self.ensure_index().next()
 
     def create_connection(self):
         if self.uri:
@@ -51,9 +51,13 @@ class MongoConnector(object):
 
         return db_conn, col_conn
 
+    def get_index_information(self):
+        yield self.col_conn.index_information()
+        return
+
     def ensure_index(self):
         index_name = 'path_1_created_at_-1'
-        indexes = yield self.col_conn.index_information()
+        indexes = self.get_index_information()
         if index_name not in indexes:
             yield self.col_conn.create_index(
                 [('path', ASCENDING), ('created_at', DESCENDING)],
