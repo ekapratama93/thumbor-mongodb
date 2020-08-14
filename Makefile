@@ -22,7 +22,7 @@ unit:
 	@@ASYNC_TEST_TIMEOUT=10 pipenv run pytest --cov=thumbor_mongodb tests/
 
 .PHONY: test
-test: mongodb lint
+test: mongodb
 	@$(MAKE) unit coverage
 	@$(MAKE) stop_mongo
 
