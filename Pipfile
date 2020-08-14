@@ -6,15 +6,19 @@ name = "pypi"
 [dev-packages]
 flake8 = "*"
 pylint = "*"
-pyvows = "*"
-coverage = "*"
-tornado_pyvows = "*"
+coverage = ">=5.0.3,<6.0.0"
 mock = "*"
+preggy = "*"
+pytest = ">=5.3.5,<6.0.0"
+pytest-asyncio = ">=0.10.0,<1.0.0"
+pytest-cov = ">=2.8.1,<3.0.0"
+pyssim = ">=0.4.0,<1.0.0"
 
 [packages]
-thumbor = "==6.5.1"
-pymongo = "==3.11.0"
+thumbor = "==7.0.0a5"
+motor = "==2.1.0"
 pytz = "*"
+thumbor-mongodb = {editable = true, path = "."}
 
 [requires]
-python_version = "2.7"
+python_version = "3.8"
