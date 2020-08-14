@@ -18,7 +18,6 @@ pyssim = ">=0.4.0,<1.0.0"
 thumbor = "==7.0.0a5"
 motor = "==2.1.0"
 pytz = "*"
-thumbor-mongodb = {editable = true, path = "."}
 
 [requires]
-python_version = "3.8"
+python_version = "3.6"
