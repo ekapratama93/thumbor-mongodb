@@ -47,7 +47,7 @@ class BaseMongoStorageTestCase(AsyncHTTPTestCase):
             self.get_config()
         )
         # pylint: disable=attribute-defined-outside-init
-        # pylint: assignment-from-none
+        # pylint: disable=assignment-from-none
         self.server = (
             self.get_server()
         )
@@ -55,7 +55,7 @@ class BaseMongoStorageTestCase(AsyncHTTPTestCase):
             self.get_importer()
         )
         # pylint: disable=attribute-defined-outside-init
-        # pylint: assignment-from-none
+        # pylint: disable=assignment-from-none
         self.request_handler = (
             self.get_request_handler()
         )
