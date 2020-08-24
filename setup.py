@@ -14,7 +14,7 @@ def read(fname):
 
 setup(
     name="thumbor_mongodb",
-    version="1.0.0",
+    version="2.0.0",
     author="ekapratama93",
     description=("Thumbor storage adapters for MongoDB"),
     license="MIT",
@@ -29,12 +29,22 @@ setup(
     ]),
     long_description=long_description,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.7',
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Operating System :: MacOS",
+        "Operating System :: POSIX :: Linux",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3 :: Only",
+        "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+        "Topic :: Multimedia :: Graphics :: Presentation",
     ],
     install_requires=[
-        'thumbor>=6.5.1,<7.0.0',
-        'pymongo>3.7.2,<4.0.0'
+        'thumbor>=7.0.0a5,<8.0.0',
+        'motor>=2.1.0,<3.0.0'
     ]
 )
