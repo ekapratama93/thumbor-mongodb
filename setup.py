@@ -20,6 +20,7 @@ setup(
     license="MIT",
     keywords="thumbor mongodb mongo",
     url="https://github.com/ekapratama93/thumbor-mongodb",
+    download_url="https://github.com/ekapratama93/thumbor-mongodb/archive/v1.0.0.tar.gz",
     packages=find_packages(include=[
         'thumbor_mongodb',
         'thumbor_mongodb.mongodb',
