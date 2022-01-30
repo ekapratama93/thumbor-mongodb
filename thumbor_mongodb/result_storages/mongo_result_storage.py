@@ -64,13 +64,12 @@ class Storage(BaseStorage):
         :returns: Default value or raise the current exception
         '''
 
-        if self.context.config.MONGODB_RESULT_STORAGE_IGNORE_ERRORS:
-            logger.error(f"[MONGODB_RESULT_STORAGE] {exc_type}, {exc_value}")
-            if fname == '_exists':
-                return False
-            return None
-        else:
+        if not self.context.config.MONGODB_RESULT_STORAGE_IGNORE_ERRORS:
             raise exc_value
+        logger.error(f"[MONGODB_RESULT_STORAGE] {exc_type}, {exc_value}")
+        if fname == '_exists':
+            return False
+        return None
 
     @property
     def is_auto_webp(self):
@@ -103,9 +102,7 @@ class Storage(BaseStorage):
         :rtype: int
         '''
 
-        default_ttl = self.context.config.RESULT_STORAGE_EXPIRATION_SECONDS
-
-        return default_ttl
+        return self.context.config.RESULT_STORAGE_EXPIRATION_SECONDS
 
     @OnException(on_mongodb_error, PyMongoError)
     async def put(self, image_bytes):
