@@ -68,13 +68,12 @@ class Storage(BaseStorage):
         :returns: Default value or raise the current exception
         '''
 
-        if self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
-            logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
-            if fname == 'exists':
-                return False
-            return None
-        else:
+        if not self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
             raise exc_value
+        logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
+        if fname == 'exists':
+            return False
+        return None
 
     def get_max_age(self):
         '''Return the TTL of the current request.
