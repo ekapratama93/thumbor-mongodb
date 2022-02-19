@@ -71,8 +71,6 @@ class Storage(BaseStorage):
         if not self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
             raise exc_value
         logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
-        if fname == '_exists':
-            return False
         return None
 
     def get_max_age(self):
