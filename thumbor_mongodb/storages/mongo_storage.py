@@ -61,7 +61,7 @@ class Storage(BaseStorage):
         return database, storage
 
     def on_mongodb_error(self, fname, exc_type, exc_value):
-        '''Callback executed when there is a redis error.
+        '''Callback executed when there is a mongodb error.
         :param string fname: Function name that was being called.
         :param type exc_type: Exception type
         :param Exception exc_value: The current exception
