@@ -212,3 +212,20 @@ class BaseMongoStorageTestCase(AsyncHTTPTestCase):
         expect(got).not_to_be_null()
         expect(got).not_to_be_an_error()
         expect(got).to_equal("ACME-SEC")
+
+    @gen_test
+    async def test_dont_ignore_error(self):
+        config = self.get_config()
+        config.MONGO_STORAGE_URI = "mongodb://localhost:27018"
+
+        url = self.get_image_url("image .jpg")
+        err = expect.error_to_happen(await self.storage.put(url, IMAGE_BYTES))
+
+    @gen_test
+    async def test_ignore_error(self):
+        config = self.get_config()
+        config.MONGO_STORAGE_URI = "mongodb://localhost:27018"
+        config.MONGODB_STORAGE_IGNORE_ERRORS = True
+
+        url = self.get_image_url("image .jpg")
+        expect(await self.storage.put(url, IMAGE_BYTES)).Not.to_be_an_error()

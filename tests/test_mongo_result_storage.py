@@ -149,3 +149,33 @@ class BaseMongoResultStorageTestCase(AsyncHTTPTestCase):
         time.sleep(ctx.config.RESULT_STORAGE_EXPIRATION_SECONDS)
         result = await storage.get()
         expect(result).to_be_null()
+
+    @gen_test
+    async def test_dont_ignore_error(self):
+        config = self.get_config()
+        config.MONGO_RESULT_STORAGE_URI = "mongodb://localhost:27018"
+        ctx = mock.Mock(
+            config=config,
+            request=mock.Mock(
+                url="image.jpg"
+            )
+        )
+        storage = Storage(ctx)
+
+        err = expect.error_to_happen(await storage.put(IMAGE_BYTES))
+        expect(err).to_have_an_error_message_of('None')
+
+    @gen_test
+    async def test_ignore_error(self):
+        config = self.get_config()
+        config.MONGO_RESULT_STORAGE_URI = "mongodb://localhost:27018"
+        config.MONGODB_RESULT_STORAGE_IGNORE_ERRORS = True
+        ctx = mock.Mock(
+            config=config,
+            request=mock.Mock(
+                url="image.jpg"
+            )
+        )
+        storage = Storage(ctx)
+
+        expect(await storage.put(IMAGE_BYTES)).Not.to_be_an_error()
