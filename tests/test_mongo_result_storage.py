@@ -149,3 +149,20 @@ class BaseMongoResultStorageTestCase(AsyncHTTPTestCase):
         time.sleep(ctx.config.RESULT_STORAGE_EXPIRATION_SECONDS)
         result = await storage.get()
         expect(result).to_be_null()
+
+    @gen_test
+    async def test_can_store_image_with_metadata(self):
+        config = self.get_config()
+        config.RESULT_STORAGE_EXPIRATION_SECONDS = 5
+        config.MONGO_STORE_METADATA = True
+
+        ctx = self.get_context()
+        ctx.config = config
+        ctx.request = RequestParameters(url="image_2.jpg")
+
+        storage = Storage(ctx)
+
+        insert = await storage.put(IMAGE_BYTES)
+        expect(insert).to_equal("image_2.jpg")
+        expect(insert).Not.to_be_an_error()
+
