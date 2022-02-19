@@ -70,7 +70,7 @@ class Storage(BaseStorage):
 
         if self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
             logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
-            if fname == '_exists':
+            if fname == 'exists':
                 return False
             return None
         else:
