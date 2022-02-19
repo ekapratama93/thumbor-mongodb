@@ -14,13 +14,13 @@ def read(fname):
 
 setup(
     name="thumbor_mongodb",
-    version="2.0.0",
+    version="2.1.0",
     author="ekapratama93",
     description=("Thumbor storage adapters for MongoDB"),
     license="MIT",
     keywords="thumbor mongodb mongo",
     url="https://github.com/ekapratama93/thumbor-mongodb",
-    download_url="https://github.com/ekapratama93/thumbor-mongodb/archive/v2.0.0.tar.gz",
+    download_url="https://github.com/ekapratama93/thumbor-mongodb/archive/v2.1.0.tar.gz",
     packages=find_packages(include=[
         'thumbor_mongodb',
         'thumbor_mongodb.mongodb',
@@ -44,7 +44,7 @@ setup(
         "Topic :: Multimedia :: Graphics :: Presentation",
     ],
     install_requires=[
-        'thumbor>=7.0.0a5,<8.0.0',
+        'thumbor>=7.0.0,<8.0.0',
         'motor>=2.1.0,<3.0.0'
     ]
 )

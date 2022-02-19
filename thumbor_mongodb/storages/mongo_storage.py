@@ -61,20 +61,19 @@ class Storage(BaseStorage):
         return database, storage
 
     def on_mongodb_error(self, fname, exc_type, exc_value):
-        '''Callback executed when there is a redis error.
+        '''Callback executed when there is a mongo error.
         :param string fname: Function name that was being called.
         :param type exc_type: Exception type
         :param Exception exc_value: The current exception
         :returns: Default value or raise the current exception
         '''
 
-        if self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
-            logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
-            if fname == '_exists':
-                return False
-            return None
-        else:
+        if not self.context.config.MONGODB_STORAGE_IGNORE_ERRORS:
             raise exc_value
+        logger.error(f"[MONGODB_STORAGE] {exc_type}, {exc_value}")
+        if fname == 'exists':
+            return False
+        return None
 
     def get_max_age(self):
         '''Return the TTL of the current request.

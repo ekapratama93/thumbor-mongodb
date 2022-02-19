@@ -57,20 +57,17 @@ class Storage(BaseStorage):
         return database, storage
 
     def on_mongodb_error(self, fname, exc_type, exc_value):
-        '''Callback executed when there is a redis error.
+        '''Callback executed when there is a mongo error.
         :param string fname: Function name that was being called.
         :param type exc_type: Exception type
         :param Exception exc_value: The current exception
         :returns: Default value or raise the current exception
         '''
 
-        if self.context.config.MONGODB_RESULT_STORAGE_IGNORE_ERRORS:
-            logger.error(f"[MONGODB_RESULT_STORAGE] {exc_type}, {exc_value}")
-            if fname == '_exists':
-                return False
-            return None
-        else:
+        if not self.context.config.MONGODB_RESULT_STORAGE_IGNORE_ERRORS:
             raise exc_value
+        logger.error(f"[MONGODB_RESULT_STORAGE] {exc_type}, {exc_value}")
+        return None
 
     @property
     def is_auto_webp(self):
@@ -103,9 +100,7 @@ class Storage(BaseStorage):
         :rtype: int
         '''
 
-        default_ttl = self.context.config.RESULT_STORAGE_EXPIRATION_SECONDS
-
-        return default_ttl
+        return self.context.config.RESULT_STORAGE_EXPIRATION_SECONDS
 
     @OnException(on_mongodb_error, PyMongoError)
     async def put(self, image_bytes):
