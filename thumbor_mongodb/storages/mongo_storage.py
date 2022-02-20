@@ -179,7 +179,7 @@ class Storage(BaseStorage):
         await self.storage.delete_many({'path': path})
 
         fs = MotorGridFSBucket(self.database)
-        cursor = await fs.find({'path': path})
+        cursor = fs.find({'path': path})
         while await cursor.fetch_next:
             grid_data = cursor.next_object()
             await fs.delete(grid_data["_id"])
