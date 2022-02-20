@@ -136,6 +136,49 @@ class BaseMongoResultStorageTestCase(AsyncHTTPTestCase):
         expect(result.last_modified).to_be_instance_of(datetime)
 
     @gen_test
+    async def test_can_get_image_using_old_config(self):
+        config = Config(
+            MONGO_RESULT_STORAGE_SERVER_HOST="localhost",
+            MONGO_RESULT_STORAGE_SERVER_PORT=27017,
+            MONGO_RESULT_STORAGE_SERVER_DB='thumbor',
+            MONGO_RESULT_STORAGE_SERVER_COLLECTION='images',
+        )
+        config.RESULT_STORAGE_EXPIRATION_SECONDS = 5
+        ctx = mock.Mock(
+            config=config,
+            request=mock.Mock(
+                url="image_old_config.jpg"
+            )
+        )
+        storage = Storage(ctx)
+
+        insert = await storage.put(IMAGE_BYTES)
+        expect(insert).to_equal("image_old_config.jpg")
+        expect(insert).Not.to_be_an_error()
+
+        result = await storage.get()
+        expect(result).to_be_instance_of(ResultStorageResult)
+        expect(result.successful).to_equal(True)
+        expect(len(result)).to_equal(7339)
+        expect(len(result)).to_equal(result.metadata["ContentLength"])
+        expect(result.last_modified).to_be_instance_of(datetime)
+
+    @gen_test
+    async def test_can_last_updated(self):
+        config = self.get_config()
+        ctx = mock.Mock(
+            config=config,
+            request=mock.Mock(
+                url="image.jpg"
+            )
+        )
+        storage = Storage(ctx)
+
+        result = storage.last_updated()
+        expect(result).to_be_instance_of(datetime)
+        expect(result).Not.to_be_an_error()
+
+    @gen_test
     async def test_cannot_get_expired_image(self):
         config = self.get_config()
         config.RESULT_STORAGE_EXPIRATION_SECONDS = 5
