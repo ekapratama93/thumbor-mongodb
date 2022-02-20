@@ -86,11 +86,51 @@ class BaseMongoStorageTestCase(AsyncHTTPTestCase):
         )
 
     @gen_test
+    async def test_can_store_image_with_old_host_port(self):
+        config = self.get_config()
+        config.MONGO_STORAGE_URI = ""
+        config.MONGO_STORAGE_SERVER_HOST = "localhost"
+        config.MONGO_STORAGE_SERVER_PORT = 27017
+        storage = MongoStorage(Context(
+            config=config, server=self.get_server()
+        ))
+        url = self.get_image_url("image_old_mongo.png")
+        await storage.put(url, IMAGE_BYTES)
+        result = await storage.get(url)
+        expect(result).not_to_be_null()
+        expect(result).not_to_be_an_error()
+
+    @gen_test
     async def test_can_store_image_should_be_in_catalog(self):
         url = self.get_image_url("image.png")
         await self.storage.put(url, IMAGE_BYTES)
         result = await self.storage.get(url)
         expect(result).not_to_be_null()
+        expect(result).not_to_be_an_error()
+
+    @gen_test
+    async def test_can_store_image_than_delete(self):
+        url = self.get_image_url("image_and_delete.png")
+        await self.storage.put(url, IMAGE_BYTES)
+        result = await self.storage.get(url)
+        expect(result).not_to_be_null()
+        expect(result).not_to_be_an_error()
+
+        await self.storage.remove(url)
+        result = await self.storage.get(url)
+        expect(result).to_be_null()
+        expect(result).not_to_be_an_error()
+
+    @gen_test
+    async def test_can_store_image_than_check_exist(self):
+        url = self.get_image_url("image_exist.png")
+        await self.storage.put(url, IMAGE_BYTES)
+        result = await self.storage.get(url)
+        expect(result).not_to_be_null()
+        expect(result).not_to_be_an_error()
+
+        result = await self.storage.exists(url)
+        expect(result).to_equal(True)
         expect(result).not_to_be_an_error()
 
     @gen_test
