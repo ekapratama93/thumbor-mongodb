@@ -12,6 +12,8 @@ jobs:
       PYTHON: ${{ matrix.python-version }}
     steps:
     - uses: actions/checkout@v2
+    - name: OSSF Scorecard action
+      uses: ossf/scorecard-action@v1.1.1
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
