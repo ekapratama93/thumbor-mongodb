@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b19ca96d52de90502630da02adafb37e5a415aff5a275b28936ca48645be16bb"
+            "sha256": "4b1822b5c4a4c4948ecebac103b32e7276824f949f3b70a0de07a00458cc7903"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,12 +16,13 @@
         ]
     },
     "default": {
-        "colorful": {
+        "colorama": {
             "hashes": [
-                "sha256:86848ad4e2eda60cd2519d8698945d22f6f6551e23e95f3f14dfbb60997807ea",
-                "sha256:8d264b52a39aae4c0ba3e2a46afbaec81b0559a99be0d2cfe2aba4cf94531348"
+                "sha256:854bf444933e37f5824ae7bfc1e98d5bce2ebe4160d46b5edf346a89358e99da",
+                "sha256:e6c6b4334fc50988a639d9b98aa429a0b57da6e17b9a44f0451f930b6967b7a4"
             ],
-            "version": "==0.5.4"
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "version": "==0.4.5"
         },
         "derpconf": {
             "hashes": [
@@ -217,13 +218,6 @@
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
         },
-        "socketfromfd": {
-            "hashes": [
-                "sha256:9c2737ad21168f0e9bc92ac0094aaffef8bbf04aae709d0fbcf1dabf9f020f72",
-                "sha256:f0a4a1289c7831bd1c80677cee5968146cab79ca310c8a2d10153fe6e9057d53"
-            ],
-            "version": "==0.2.0"
-        },
         "statsd": {
             "hashes": [
                 "sha256:c610fb80347fca0ef62666d241bce64184bd7cc1efe582f9690e045c25535eaa",
@@ -233,10 +227,17 @@
         },
         "thumbor": {
             "hashes": [
-                "sha256:452f223665ef1d755feb718d109035158a01aa86949aa38d9aca39286519c2d9"
+                "sha256:720f8688412197b16926fed0d52254bd62874c39aca2cecf6eb824ce73c15c09"
             ],
             "index": "pypi",
-            "version": "==7.0.6"
+            "version": "==7.0.10"
+        },
+        "thumbor-plugins-gifv": {
+            "hashes": [
+                "sha256:5f20f4bd824c419324ac6a7d782feaad82cebc0675e3927cdb1057e1c6de188b",
+                "sha256:bd79cf820f25368b3ba7ef052ce6fae6c786532829d01d612f307ea0f43c82fc"
+            ],
+            "version": "==0.1.2"
         },
         "tornado": {
             "hashes": [
@@ -287,11 +288,11 @@
         },
         "webcolors": {
             "hashes": [
-                "sha256:16d043d3a08fd6a1b1b7e3e9e62640d09790dce80d2bdd4792a175b35fe794a9",
-                "sha256:d98743d81d498a2d3eaf165196e65481f0d2ea85281463d856b1e51b09f62dce"
+                "sha256:76f360636957d1c976db7466bc71dcb713bb95ac8911944dffc55c01cb516de6",
+                "sha256:b8cd5d865a25c51ff1218f0c90d0c0781fc64312a49b746b320cf50de1648f6e"
             ],
-            "markers": "python_version >= '3.7'",
-            "version": "==1.12"
+            "markers": "python_version >= '3.5'",
+            "version": "==1.11.1"
         }
     },
     "develop": {
@@ -328,7 +329,6 @@
             "version": "==8.1.3"
         },
         "coverage": {
-            "extras": [],
             "hashes": [
                 "sha256:01c5615d13f3dd3aa8543afc069e5319cfa0c7d712f6e04b920431e5c564a749",
                 "sha256:106c16dfe494de3193ec55cac9640dd039b66e196e4641fa8ac396181578b982",
@@ -878,7 +878,7 @@
                 "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc",
                 "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.11'",
             "version": "==2.0.1"
         },
         "tomlkit": {
@@ -902,7 +902,7 @@
                 "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708",
                 "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"
             ],
-            "markers": "python_version < '3.10'",
+            "markers": "python_version >= '3.7'",
             "version": "==4.2.0"
         },
         "typing-inspect": {
