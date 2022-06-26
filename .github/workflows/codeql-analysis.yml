@@ -29,6 +29,11 @@ jobs:
         # https://docs.github.com/en/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#overriding-automatic-language-detection
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@v1
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
@@ -69,3 +74,6 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
+
+permissions:
+  contents: read
