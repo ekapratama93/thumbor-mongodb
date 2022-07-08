@@ -16,7 +16,7 @@ pyssim = ">=0.4.0,<1.0.0"
 pyre-check = "*"
 
 [packages]
-thumbor = "==7.0.11"
+thumbor = "==7.0.12"
 motor = "==2.5.1"
 pytz = "*"
 
