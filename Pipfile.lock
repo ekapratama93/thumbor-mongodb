@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d29d1025aef3221553693e0ba7f0256c174ae9451483bd4060d89657996ed00a"
+            "sha256": "0897f1b1159183b67ed43cc974292aec78012d54799e947c8626b32fa96bef1b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -45,6 +45,14 @@
             ],
             "index": "pypi",
             "version": "==2.5.1"
+        },
+        "piexif": {
+            "hashes": [
+                "sha256:3bc435d171720150b81b15d27e05e54b8abbde7b4242cddd81ef160d283108b6",
+                "sha256:83cb35c606bf3a1ea1a8f0a25cb42cf17e24353fd82e87ae3884e74a302a5f1b"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'",
+            "version": "==1.1.3"
         },
         "pillow": {
             "hashes": [
@@ -253,10 +261,10 @@
         },
         "thumbor": {
             "hashes": [
-                "sha256:1dbd73bd6a024a7dc3a68c52cc7184f2aee5889bf447500bfab95cc5df8b90d1"
+                "sha256:2d45355262c0282044d69f4823fe4141145578b0c4096d83fea4d05a499894fe"
             ],
             "index": "pypi",
-            "version": "==7.3.0"
+            "version": "==7.3.1"
         },
         "thumbor-plugins-gifv": {
             "hashes": [
