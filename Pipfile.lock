@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0659e1cccf4578d51f342deb143c97c565f83cb52a7dcf363a898fc0760a5946"
+            "sha256": "75ec957f6361f544eb69a8734b1658b17cd5ed5db0bbc26761cc6db35dc33c6f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -277,19 +277,19 @@
         },
         "thumbor": {
             "hashes": [
-                "sha256:2e89b8f5734adf184f564b02f940e6cd0d38fb40f61ff5f6e3cb8c970f90ea7f",
-                "sha256:414a399aa2c07d2bdc6d6efc2c80e1722f7ddc99581af9ff4b748533ead02111",
-                "sha256:44b8a3e971aec490673b3f5e4f2a60c82293bce06d5b7a7ce9ce5bc254aabc57",
-                "sha256:59454e75f8e86eb5895a903618837450cde8506f19a0765dca4a7a3f889f540a",
-                "sha256:682c6821d4e8b11c8ac84962e20f9e65ec03e4da060667215ee41889fd6a7565",
-                "sha256:92c24f4bba3476aeeb45b4328140b4bf3eeb2d2c2aa6a444dc2e8df4122d3dd3",
-                "sha256:a539e512c7f67aed870f3e744c610105734d4ebbe279629e07042b8d16f5dabe",
-                "sha256:a66a8efc229aada5769397a36703eb94a8f4dffd93ad412826baf637f8bcaf12",
-                "sha256:da4eb1fd5367b38139c2c4872d59b844604af2eba3e793f4e83fcc89aa612c5f",
-                "sha256:de8d8dc9368677b93c282cab5ab388dc9e16025a3862f24fcb9800ad538dc0c8"
+                "sha256:124607d4d0d91bf8e05d61a4f819559b948e3795e9353e14519b5748197f8d27",
+                "sha256:1ae7ba1ef6c461f198923ec51e1b1032c627f7f1ca2fbcf9106a02d689509c69",
+                "sha256:369b39168b3c216d0841aa74db2a4a8c4b8a8f0ffdfd63a62b962cfd29aee037",
+                "sha256:3e24c4ef3f14dea620a61b62806fec4c315fd5013c79a3efe5bfde19949e6fa1",
+                "sha256:6034aac80a7abcb472d72a1e8ff137ffb5cd4c2cff52d8335fc0608f57624131",
+                "sha256:65f492147bba2d95a5fcd91deb613b5258fb7af5637fa1a8a7d9a85eba59a3a1",
+                "sha256:982df7e3b20981bac5ccb970868d5f8b2be7b89833e84ae5bd7e01a7a547086b",
+                "sha256:d95d50587ea360e7cb3b410df0abf9944c01b876af3e4dda3b08531ac0d32878",
+                "sha256:f20f4682abe5ae8c83a62ee91f00c63f0f33756ccbb11b3be21f04b4c3f6d3e1",
+                "sha256:f763f412c1cb57f63c16aa276f3ea2768709a6f71ec072529a9b3fed3e8162e8"
             ],
             "index": "pypi",
-            "version": "==7.4.6"
+            "version": "==7.4.7"
         },
         "thumbor-plugins-gifv": {
             "hashes": [
