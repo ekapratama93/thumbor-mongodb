@@ -6,7 +6,7 @@ name = "pypi"
 [dev-packages]
 flake8 = "*"
 pylint = "*"
-coverage = ">=7.3.0,<7.4.0"
+coverage = ">=7.6.4,<7.7.0"
 mock = "*"
 preggy = "*"
 pytest = ">=6.2.5"
