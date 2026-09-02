@@ -45,6 +45,6 @@ setup(
     ],
     install_requires=[
         'thumbor>=7.0.0,<8.0.0',
-        'motor>=2.1.0,<3.0.0'
+        'motor>=3.7.1,<3.8.0'
     ]
 )
